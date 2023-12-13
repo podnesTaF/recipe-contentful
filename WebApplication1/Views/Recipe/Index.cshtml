@@ -1,0 +1,32 @@
+﻿@using Contentful.Core.Models
+
+@model ContentfulCollection<Recipe>
+
+<h2>Recipes</h2>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Preparation Time</th>
+        <th>Energy</th>
+        <th>Image</th>
+    </tr>
+
+    @foreach (var recipe in Model)
+    {
+        <tr>
+            <td>@recipe.Title</td>
+            <td>@recipe.Description</td>
+            <td>@recipe.PreparationTime</td>
+            <td>@recipe.Energy</td>
+            <td>
+                <img src="@recipe.Image?.File?.Url" alt="@recipe.Image?.Title" width="50" height="50" />
+            </td>
+        </tr>
+    }
+</table>
+
+<script type="text/javascript">
+    console.log(@Html.Raw(Json.Serialize(Model)));
+</script>

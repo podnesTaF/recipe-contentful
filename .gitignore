@@ -1,0 +1,48 @@
+# Ignore the build directories
+bin/
+obj/
+
+# Ignore the packages directory
+packages/
+
+# User-specific files for Visual Studio
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# ReSharper / Rider files
+_ReSharper.*
+*.DotSettings.user
+
+# VS 2015+ cache/options directory
+.vs/
+
+# Ignore Web Publish files
+*.Publish.xml
+*.pubxml
+*.pubxml.user
+
+# Ignore global assembly info files (if necessary)
+# AssemblyInfo.cs
+
+# Local DB database files
+*.mdf
+*.ldf
+
+# Other files and directories
+*.nupkg
+App_Data/
+*.log
+*.bak
+
+# Node modules (if using Node.js)
+node_modules/
+
+# Ignore sensitive environment files (modify as per your requirement)
+# appsettings.json
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
