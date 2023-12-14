@@ -30,6 +30,14 @@ namespace WebApplication1.Controllers
       return View();
     }
 
+    public async Task<IActionResult> Details(string id)
+    {
+      var queryBuilder = new QueryBuilder<Recipe>().ContentTypeIs("recipe").FieldEquals("sys.id", id);
+      var recipe = await client.GetEntry<Recipe>(id);
+
+      return View(recipe);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateRecipe(RecipeViewModel model)
     {

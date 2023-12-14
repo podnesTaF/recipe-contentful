@@ -15,16 +15,27 @@
           Share Your Recipe
         </h1>
         </a>
+        @if (!ViewContext.RouteData.Values["controller"].Equals("Recipe") || !ViewContext.RouteData.Values["action"].Equals("Create"))
+        {
+            <a href='/recipe/create' class="text-white">
+                <button class="py-2 px-4 rounded bg-[#64C9C9] shadow-md text-xl font-semibold text-white hover:opacity-90 active:scale-95">
+                    Publish Your Recipe
+                </button>
+            </a>
+        }
     </header>
-    <div class="bg-[url('/images/korean-bibimbap.png')] bg-no-repeat bg-cover  h-64 flex justify-end items-center px-[6%]">
-      <div class="flex flex-column gap-4">
+    <div class="bg-[url('/images/korean-bibimbap.png')] bg-no-repeat bg-cover  h-48 flex justify-end items-center px-[6%]">
+      <div class="flex flex-col gap-4 max-w-lg">
         <h2 class="text-3xl font-semibold">
           Welcome to <span class="text-[#FA6533]">Share your recipe</span>
         </h2>
+        <p class="text-lg">
+          Share your recipe with the world and see what others are cooking!
+        </p>
       </div>
     </div>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="w-full">
+        <main role="main" class="pb-3 w-full">
             @RenderBody()
         </main>
     </div>
@@ -35,7 +46,6 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
