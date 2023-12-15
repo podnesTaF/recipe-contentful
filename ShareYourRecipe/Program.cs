@@ -32,6 +32,11 @@ builder.Services.AddSingleton<IContentfulManagementClient>(serviceProvider =>
   );
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+  serverOptions.ListenAnyIP(80); // Listen for HTTP traffic on port 80
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

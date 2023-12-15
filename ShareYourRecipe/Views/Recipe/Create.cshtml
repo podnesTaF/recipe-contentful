@@ -1,0 +1,73 @@
+﻿@model ShareYourRecipe.Models.RecipeViewModel
+
+@{
+    ViewData["Title"] = "Create Recipe";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+ <div class="max-w-6xl mx-5 my-[3%] xl:mx-auto shadow-lg bg-white p-6 border-[1px] border-[#64C9C980]">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Build your recipe</h2>
+    <form asp-action="CreateRecipe" asp-controller="Recipe" method="post"  enctype="multipart/form-data">
+    <div class="flex flex-col md:flex-row justify-between gap-8">
+      <div class="w-full md:w-1/2 flex flex-col gap-4">
+      <div class="w-full flex flex-col">
+          <label class="input-label" asp-for="Title">Recipe Title</label>
+          <input asp-for="Title" class="form-input" placeholder="e.g pasta carbonara" />
+      </div>
+      <div class="w-full flex flex-col">
+          <label  class="input-label" asp-for="Description">Description</label>
+          <textarea rows="4" asp-for="Description" class="form-input" placeholder="e.g the tasty dish including ingredients:..."></textarea>
+      </div>
+      <div class="w-full flex flex-col">
+          <label   class="input-label" asp-for="PreparationTime">Preparation time (minutes)</label>
+          <input asp-for="PreparationTime" placeholder="e.g 15" class="form-input" />
+      </div>
+    </div>
+    <div class="w-full md:w-1/2 flex flex-col gap-4">
+      <div class="w-full flex flex-col">
+          <label class="input-label" asp-for="Energy">Energy (kcal)</label>
+          <input asp-for="Energy" placeholder="e.g 600" class="form-input" />
+      </div>
+       <div class="w-full flex flex-col">
+          <label class="input-label" asp-for="GramsPerServing">Grams per Serving</label>
+          <input asp-for="GramsPerServing" placeholder="e.g 350" class="form-input" />
+      </div>
+      <div class="w-full flex flex-col">
+          <label class="input-label" asp-for="Author">Your Full Name</label>
+          <input asp-for="Author" placeholder="e.g John Doe" class="form-input" />
+      </div>
+      <div class="w-full flex flex-col">
+          <label asp-for="Image" class="input-label">Image</label>
+          <input asp-for="Image" type="file" />
+          <span asp-validation-for="Image" class="text-danger"></span>
+      </div>
+    </div>
+    </div>
+    <div class="my-4 flex justify-end">
+        <button type="submit" class="py-2 px-4 rounded bg-[#64C9C9] shadow-md text-xl font-semibold text-white hover:opacity-90 active:scale-95">
+            Publish Your Recipe
+        </button>
+    </div>
+  </form>
+</div>
+
+<script>
+    @if (ViewData["Response"] != null)
+    {
+        @:console.log(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Response"])));
+    }
+    else
+    {
+        @:console.log("No response data available.");
+    }
+</script>

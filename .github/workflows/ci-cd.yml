@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with: # the secret I created inside my working repository. I generated the access  token in the docker hub.
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Determine Changed Paths
+        id: changed-files
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            project:
+              - 'ShareYourRecipe/**'
+      - name: Build and Push Project Docker Image
+        if: steps.changed-files.outputs.project == 'true' # if some files were changed within "ShareYourRecipe" directory
+        run: |
+          docker build -t podnes/share-your-recipe ./ShareYourRecipe
+          docker push podnes/share-your-recipe:latest

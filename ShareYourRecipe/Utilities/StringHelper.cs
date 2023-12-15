@@ -1,4 +1,4 @@
-namespace WebApplication1.Utilities
+namespace ShareYourRecipe.Utilities
 {
   public static class StringHelper
   {

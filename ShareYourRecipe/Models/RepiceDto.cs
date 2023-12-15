@@ -1,6 +1,6 @@
 ﻿using Contentful.Core.Models;
 
-namespace WebApplication1.Models
+namespace ShareYourRecipe.Models
 {
   public class RecipeDto
   {
@@ -8,6 +8,10 @@ namespace WebApplication1.Models
     public Dictionary<string, string>? Description { get; set; }
     public Dictionary<string, string>? PreparationTime { get; set; }
     public Dictionary<string, string>? Energy { get; set; }
+
+    public Dictionary<string, string>? GramsPerServing { get; set; }
+
+    public Dictionary<string, string>? Author { get; set; }
 
     public SystemProperties? SystemProperties { get; set; }
 

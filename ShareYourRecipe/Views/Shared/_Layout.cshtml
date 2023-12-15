@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Share Your Recipe</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="favicon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ShareYourRecipe.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header class="flex py-4 px-8 justify-between bg-[#FA6533]">
+    <header class="flex flex-col gap-4 sm:flex-row items-center py-4 px-8 justify-between bg-[#FA6533]">
         <a href="/" class="text-3xl font-semibold">
         <h1 class="text-white hover:opacity-90">
-          Share Your Recipe
+          Share <span class="text-[#64C9C9]">Your</span> Recipe
         </h1>
         </a>
         @if (!ViewContext.RouteData.Values["controller"].Equals("Recipe") || !ViewContext.RouteData.Values["action"].Equals("Create"))
@@ -25,11 +26,11 @@
         }
     </header>
     <div class="bg-[url('/images/korean-bibimbap.png')] bg-no-repeat bg-cover  h-48 flex justify-end items-center px-[6%]">
-      <div class="flex flex-col gap-4 max-w-lg">
-        <h2 class="text-3xl font-semibold">
+      <div class="flex flex-col gap-4 max-w-lg bg-[#00000080] p-4">
+        <h2 class="text-3xl font-semibold text-white">
           Welcome to <span class="text-[#FA6533]">Share your recipe</span>
         </h2>
-        <p class="text-lg">
+        <p class="text-lg text-white">
           Share your recipe with the world and see what others are cooking!
         </p>
       </div>
@@ -39,12 +40,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

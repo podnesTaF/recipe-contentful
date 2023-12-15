@@ -7,23 +7,44 @@ using Newtonsoft.Json;
 using System.Dynamic;
 using System.Net.Http;
 using System.Net.Mime;
-using WebApplication1.Models;
+using ShareYourRecipe.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using ContentType = Contentful.Core.Models.ContentType;
 using File = Contentful.Core.Models.File;
 
-namespace WebApplication1.Controllers
+namespace ShareYourRecipe.Controllers
 {
 
   public class RecipeController(IContentfulClient client, IContentfulManagementClient managementClient) : Controller
   {
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString = "", int page = 1)
     {
-      var queryBuilder = new QueryBuilder<Recipe>().ContentTypeIs("recipe");
-      var entries = await client.GetEntries(queryBuilder);
+      const int pageSize = 6;
+      var skip = (page - 1) * pageSize;
+      var queryBuilder = new QueryBuilder<Recipe>().ContentTypeIs("recipe")
+                                                 .Limit(pageSize)
+                                                 .Skip(skip);
 
-      return View(entries);
+      if (!string.IsNullOrEmpty(searchString))
+      {
+        queryBuilder = queryBuilder.FieldMatches("fields.title", searchString);
+      }
+
+      var entries = await client.GetEntries(queryBuilder);
+      var totalRecipes = entries.Total;
+
+      var totalPages = (int)Math.Ceiling((double)totalRecipes / pageSize);
+
+      var viewModel = new RecipeView
+      {
+        Recipes = entries,
+        CurrentPage = page,
+        TotalPages = totalPages,
+        SearchString = searchString
+      };
+
+      return View(viewModel);
     }
     public IActionResult Create()
     {
@@ -33,7 +54,14 @@ namespace WebApplication1.Controllers
     public async Task<IActionResult> Details(string id)
     {
       var queryBuilder = new QueryBuilder<Recipe>().ContentTypeIs("recipe").FieldEquals("sys.id", id);
-      var recipe = await client.GetEntry<Recipe>(id);
+      var recipes = await client.GetEntries(queryBuilder);
+
+      if (recipes == null || recipes.Count() == 0)
+      {
+        return NotFound();
+      }
+
+      var recipe = recipes.First();
 
       return View(recipe);
     }
@@ -59,6 +87,8 @@ namespace WebApplication1.Controllers
       fields.Description = new Dictionary<string, string> { { "en-US", model.Description } };
       fields.PreparationTime = new Dictionary<string, string> { { "en-US", model.PreparationTime } };
       fields.Energy = new Dictionary<string, string> { { "en-US", model.Energy } };
+      fields.GramsPerServing = new Dictionary<string, string> { { "en-US", model.GramsPerServing } };
+      fields.Author = new Dictionary<string, string> { { "en-US", model.Author } };
 
 
       // Handle image uploading

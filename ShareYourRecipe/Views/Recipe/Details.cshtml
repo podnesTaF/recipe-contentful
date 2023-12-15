@@ -1,0 +1,46 @@
+@model ShareYourRecipe.Models.Recipe
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="max-w-6xl mx-5 my-[4%] xl:mx-auto shadow-lg bg-white flex flex-col md:flex-row">
+  <div class="w-full md:w-3/5 flex flex-col justify-between gap-5 p-8">
+    <h2 class="text-2xl font-semibold text-gray-800">@Model.Title</h2>
+    <div class="flex gap-4 md:gap-8">
+      <div class="flex flex-col gap-3">
+        <h5 class="font-semibold text-gray-800">Energy</h5>
+        <h5 class="font-semibold text-[#FA6533]">@Model.Energy kcal</h5>
+      </div>
+      <div class="flex flex-col gap-3">
+        <h5 class="font-semibold text-gray-800">Prep time</h5>
+        <h5 class="font-semibold text-[#FA6533]">@Model.PreparationTime min</h5>
+      </div>
+      <div class="flex flex-col gap-3">
+        <h5 class="font-semibold text-gray-800">Grams per Serving</h5>
+        <h5 class="font-semibold text-[#FA6533]">@Model.GramsPerServing grams</h5>
+      </div>
+    </div>
+    <p class="font-semibold text-[#64C9C9] max-w-lg">@Model.Description</p>
+    <h3 class="text-2xl font-semibold text-gray-800">@{
+    var words = Model.Author.Split(' ');
+    if (words.Length > 0)
+    {
+        for (int i = 0; i < words.Length - 1; i++)
+        {
+            <span>@words[i] </span>
+        }
+
+        <span class="text-[#64C9C9]">@words[^1]</span>
+    }
+    }</h3>
+  </div>
+  <div class="w-full md:w-2/5">
+     <img src="@Model.Image?.File?.Url" alt="@Model.Image?.Title" class='object-cover object-center w-full h-[300px] md:h-[500px]' />
+  </div>
+</div>
+
+<script>
+  const recipe = @Html.Raw(Json.Serialize(Model));
+  console.log(recipe);
+</script>
