@@ -14,8 +14,6 @@ namespace ShareYourRecipe.Models
     public required string Author { get; set; }
 
     public IFormFile? Image { get; set; }
-
-    public RecipeDto? Response { get; set; }
   }
 
   public class RecipeView

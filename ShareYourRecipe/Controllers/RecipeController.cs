@@ -17,11 +17,11 @@ namespace ShareYourRecipe.Controllers
 
   public class RecipeController(IContentfulClient client, IContentfulManagementClient managementClient) : Controller
   {
-
     public async Task<IActionResult> Index(string searchString = "", int page = 1)
     {
       const int pageSize = 6;
       var skip = (page - 1) * pageSize;
+
       var queryBuilder = new QueryBuilder<Recipe>().ContentTypeIs("recipe")
                                                  .Limit(pageSize)
                                                  .Skip(skip);
@@ -94,6 +94,8 @@ namespace ShareYourRecipe.Controllers
       // Handle image uploading
       try
       {
+
+        // Convert the uploaded image to a byte array.
         if (model.Image != null)
         {
           byte[] imageBytes;
@@ -103,24 +105,31 @@ namespace ShareYourRecipe.Controllers
             imageBytes = ms.ToArray();
           }
 
+          // Generate a unique ID for the new asset in Contentful
           var assetId = Guid.NewGuid().ToString();
 
+          // Create a new instance of ManagementAsset to hold the image details.
           var managementAsset = new ManagementAsset();
 
+          // Initialize SystemProperties for the management asset and set its ID and version.
           managementAsset.SystemProperties = new SystemProperties();
           managementAsset.SystemProperties.Id = assetId;
           managementAsset.SystemProperties.Version = 1;
 
+          // Extract the file name from the uploaded image.
           var fileName = Path.GetFileName(model.Image.FileName);
 
+          // Extract the content type (MIME type) of the uploaded image.
           var contentType = model.Image.ContentType;
 
+
+          // Set the title of the asset (in this case, using the file name).
           managementAsset.Title = new Dictionary<string, string> {
                 { "en-US", fileName}
             };
 
 
-
+          // Set the file details for the asset, including content type and file name.
           managementAsset.Files = new Dictionary<string, File>
             {
                 { "en-US", new File() {
@@ -130,13 +139,16 @@ namespace ShareYourRecipe.Controllers
                 }
             };
 
+          // Upload the image file to Contentful and create a corresponding asset.
           var newImage = await managementClient.UploadFileAndCreateAsset(managementAsset, imageBytes);
 
+          // Retrieve the ID of the newly created asset.
           var imageId = newImage.SystemProperties.Id;
 
-          var asset = await managementClient.GetAsset(imageId);
-
+          // Publish the asset.
           var res = await managementClient.PublishAsset(imageId, 2);
+
+          // Assign the published asset to the 'fields.Image' property.
           fields.Image = new Dictionary<string, Asset>()
           {
             { "en-US", new Asset
@@ -149,22 +161,18 @@ namespace ShareYourRecipe.Controllers
             }
           }}
           };
-
-
-          System.Diagnostics.Debug.WriteLine(res);
-
         }
         else
         {
-          ModelState.AddModelError(string.Empty, "An error occurred while uploading image no image");
+          // If no image is uploaded, add an error message to the ModelState.
+          ModelState.AddModelError(string.Empty, "Each recipe has to have an Image");
           return View("Create", model);
         }
       }
       catch (Exception ex)
       {
-        ModelState.AddModelError(string.Empty, "An error occurred while uploading image" + ex);
+        // Catch any exceptions during the process, add error messages to ModelState.
         ModelState.AddModelError(string.Empty, "An error occurred while uploading image" + ex.Message);
-
         // Return to the view with the current model to display the error
         return View("Create", model);
       }
@@ -172,31 +180,15 @@ namespace ShareYourRecipe.Controllers
       {
         entry.Fields = fields;
         var response = await managementClient.CreateOrUpdateEntry(entry, contentTypeId: "recipe");
-        if (response != null && response.SystemProperties != null)
-        {
-          var entryId = response.SystemProperties.Id;
-          var version = 1;
-          var publishedEntry = await managementClient.PublishEntry(entryId, version);
-        }
-        else
-        {
-
-          // Handle the scenario where the entry creation didn't return a valid response
-
-          ModelState.AddModelError(string.Empty, "An error occurred while creating entity" + '\n' + response?.SystemProperties);
-          return View("Create", model);
-        }
-
-        System.Diagnostics.Debug.WriteLine(response);
+        var entryId = response.SystemProperties.Id;
+        var version = 1;
+        var publishedEntry = await managementClient.PublishEntry(entryId, version);
 
         return RedirectToAction("Index");
       }
       catch (Exception ex)
       {
-        ModelState.AddModelError(string.Empty, "An error occurred while creating entity 12: " + ex.Message);
-
-
-        // Return to the view with the current model to display the error
+        ModelState.AddModelError(string.Empty, "An error occurred while creating entity: " + ex.Message);
         return View("Create", model);
       }
     }

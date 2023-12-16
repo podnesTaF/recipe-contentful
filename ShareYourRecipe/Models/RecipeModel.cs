@@ -13,6 +13,4 @@ public class Recipe
   public required string Author { get; set; }
 
   public Asset? Image { get; set; }
-
-
 }

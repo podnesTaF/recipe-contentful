@@ -1,3 +1,4 @@
+# The workflow triggers on every push to the 'main' branch.
 on:
   push:
     branches:
@@ -6,15 +7,20 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+      # Checks out the repository code, making it available to the workflow.
       - name: Check Out Repo
         uses: actions/checkout@v2
 
+      # Logs into Docker Hub using the secrets stored in the GitHub repository.
+      # DOCKER_HUB_USERNAME and DOCKER_HUB_ACCESS_TOKEN set in the repository's secrets.
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        with: # the secret I created inside my working repository. I generated the access  token in the docker hub.
+        with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # Determines if there are any changes in the 'ShareYourRecipe' directory.
+      # This step helps to avoid unnecessary builds when there are no changes in the application code.
       - name: Determine Changed Paths
         id: changed-files
         uses: dorny/paths-filter@v2
@@ -22,8 +28,12 @@ jobs:
           filters: |
             project:
               - 'ShareYourRecipe/**'
+
+      # Builds and pushes the Docker image only if there are changes in the 'ShareYourRecipe' directory.
       - name: Build and Push Project Docker Image
-        if: steps.changed-files.outputs.project == 'true' # if some files were changed within "ShareYourRecipe" directory
+        if: steps.changed-files.outputs.project == 'true' # Conditional step based on the output of the previous step.
         run: |
+          # Builds a Docker image from the Dockerfile in the 'ShareYourRecipe' directory and tags it.
           docker build -t podnes/share-your-recipe ./ShareYourRecipe
+          # Pushes the built Docker image to Docker Hub.
           docker push podnes/share-your-recipe:latest

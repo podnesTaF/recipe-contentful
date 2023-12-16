@@ -1,21 +1,27 @@
 using Contentful.Core.Configuration;
 using Contentful.Core;
-
+using System.Net;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+
+// Configure Contentful Delivery API Client
 builder.Services.AddSingleton<IContentfulClient>(serviceProvider =>
 {
   var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
   var httpClient = httpClientFactory.CreateClient();
 
+  var deliveryApiKey = builder.Configuration["ContentfulOptions:DeliveryApiKey"];
+  var previewApiKey = builder.Configuration["ContentfulOptions:PreviewApiKey"];
+  var spaceId = builder.Configuration["ContentfulOptions:SpaceId"];
+
   return new ContentfulClient(
       httpClient,
-      builder.Configuration["ContentfulOptions:DeliveryApiKey"],
-      builder.Configuration["ContentfulOptions:PreviewApiKey"],
-      builder.Configuration["ContentfulOptions:SpaceId"]
+      deliveryApiKey,
+      previewApiKey,
+      spaceId
   );
 });
 
@@ -34,8 +40,9 @@ builder.Services.AddSingleton<IContentfulManagementClient>(serviceProvider =>
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-  serverOptions.ListenAnyIP(80); // Listen for HTTP traffic on port 80
+  serverOptions.ListenAnyIP(80);
 });
+
 
 var app = builder.Build();
 

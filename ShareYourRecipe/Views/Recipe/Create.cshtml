@@ -60,14 +60,3 @@
     </div>
   </form>
 </div>
-
-<script>
-    @if (ViewData["Response"] != null)
-    {
-        @:console.log(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Response"])));
-    }
-    else
-    {
-        @:console.log("No response data available.");
-    }
-</script>
