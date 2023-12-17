@@ -172,7 +172,7 @@ namespace ShareYourRecipe.Controllers
       catch (Exception ex)
       {
         // Catch any exceptions during the process, add error messages to ModelState.
-        ModelState.AddModelError(string.Empty, "An error occurred while uploading image" + ex.Message);
+        ModelState.AddModelError(string.Empty, "An error occurred while uploading image " + ex.Message);
         // Return to the view with the current model to display the error
         return View("Create", model);
       }
@@ -181,7 +181,7 @@ namespace ShareYourRecipe.Controllers
         entry.Fields = fields;
         var response = await managementClient.CreateOrUpdateEntry(entry, contentTypeId: "recipe");
         var entryId = response.SystemProperties.Id;
-        var version = 1;
+        var version = 2;
         var publishedEntry = await managementClient.PublishEntry(entryId, version);
 
         return RedirectToAction("Index");
